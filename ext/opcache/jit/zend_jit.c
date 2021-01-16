@@ -2910,7 +2910,7 @@ ZEND_EXT_API void zend_jit_unprotect(void)
 {
 #ifdef HAVE_MPROTECT
 	if (!(ZCG(accel_directives).jit_debug & (ZEND_JIT_DEBUG_GDB|ZEND_JIT_DEBUG_PERF_DUMP))) {
-		if (mprotect(dasm_buf, dasm_size, PROT_READ | PROT_WRITE) != 0) {
+		if (mprotect(dasm_buf, dasm_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
 			fprintf(stderr, "mprotect() failed [%d] %s\n", errno, strerror(errno));
 		}
 	}
@@ -2918,7 +2918,7 @@ ZEND_EXT_API void zend_jit_unprotect(void)
 	if (!(ZCG(accel_directives).jit_debug & (ZEND_JIT_DEBUG_GDB|ZEND_JIT_DEBUG_PERF_DUMP))) {
 		DWORD old;
 
-		if (!VirtualProtect(dasm_buf, dasm_size, PAGE_READWRITE, &old)) {
+		if (!VirtualProtect(dasm_buf, dasm_size, PAGE_EXECUTE_READWRITE, &old)) {
 			fprintf(stderr, "VirtualProtect() failed\n");
 		}
 	}
